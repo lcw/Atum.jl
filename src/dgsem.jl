@@ -29,7 +29,8 @@ function Adapt.adapt_structure(to, dg::DGSEM)
 end
 
 function DGSEM(; law, grid, surface_numericalflux,
-                 volume_form = WeakForm())
+                 volume_form = WeakForm(),
+                 auxstate = auxiliary.(Ref(law), points(grid)))
   cell = referencecell(grid)
   M = mass(cell)
   _, J = components(metrics(grid))
@@ -40,8 +41,6 @@ function DGSEM(; law, grid, surface_numericalflux,
   _, faceJ = components(facemetrics(grid))
 
   faceMJ = faceM * faceJ
-
-  auxstate = auxiliary.(Ref(law), points(grid))
 
   args = (law, grid, MJ, MJI, faceMJ, auxstate,
           volume_form, surface_numericalflux)
